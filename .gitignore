@@ -232,3 +232,6 @@ scratch/
 
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# Railway pinned plan artifacts
+railway-plan.json

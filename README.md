@@ -38,15 +38,27 @@ doubles as the container health check.
 
 ## Deploy to Railway
 
-A single Railway service serves the static frontend from one origin (root
-`Dockerfile`), configured in [`railway.toml`](railway.toml).
+Infrastructure is defined in code: [`.railway/railway.ts`](.railway/railway.ts)
+(Railway [Infrastructure as Code](https://docs.railway.com/infrastructure-as-code);
+the old `railway.toml` Config as Code file was removed — CaC is deprecated and
+unread after 2026-12-01). A single Railway service serves the static frontend
+from one origin (root `Dockerfile`). The IaC file declares the `GET /`
+healthcheck (timeout 60s), the GitHub deploy source, 1 replica in Southeast
+Asia, the `bifrost.parag.tech` domain, and the live limit/egress/sleep
+settings (imported with `railway config pull`); the restart policy remains
+dashboard-managed.
 
-1. `railway init` (or connect the GitHub repo for autodeploy from `main`).
-2. No environment variables are required — the frontend is fully static.
-3. `railway up` — builds the root `Dockerfile` (Node 20 stage builds
-   `web/out/`, nginx stage serves it on `:8080`).
-4. Railway polls `GET /` (configured in `railway.toml`).
-5. Smoke checks against the deployed domain:
+1. No environment variables are required — the frontend is fully static.
+2. Deploys: connect the GitHub repo (autodeploy from `main`) or run
+   `railway up` from the repo root — it builds the root `Dockerfile`
+   (Node 20 stage builds `web/out/`, nginx stage serves it on `:8080`).
+3. Config changes are **manual local steps** (CI stays deploy-free and never
+   touches Railway):
+   - `railway config plan --detailed-exit-code` — preview drift (`0` = in
+     sync, `2` = pending changes).
+   - `railway config apply --yes` — apply `.railway/railway.ts`; add
+     `--confirm-destructive` if the plan includes deletions.
+4. Smoke checks against the deployed domain:
    - `GET /` → home renders (hero tab active).
    - `GET /logo.webp` → `200`, static media cached 7d.
    - `GET /_next/static/…` asset → `200`, `Cache-Control: immutable`.
