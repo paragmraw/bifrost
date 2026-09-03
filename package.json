@@ -1,0 +1,16 @@
+{
+  "name": "bifrost",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bifrost web frontend — Next.js static export built and served by the root Dockerfile. This root manifest exists only to pin the Railway IaC SDK for .railway/railway.ts and its CI typecheck; the app itself lives in web/.",
+  "scripts": {
+    "railway:plan": "railway config plan --detailed-exit-code",
+    "railway:apply": "railway config apply",
+    "check:iac": "tsc --noEmit .railway/railway.ts"
+  },
+  "devDependencies": {
+    "@railway/cli": "5.49.0",
+    "railway": "3.11.0",
+    "typescript": "7.0.2"
+  }
+}

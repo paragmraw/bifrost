@@ -46,7 +46,13 @@ container health check.
 
 Single-container deploy — the same pattern as
 [nyaya](https://github.com/paragmraw/nyaya): one image, one origin, health
-check on `GET /`. Railway config lives in the root [`railway.toml`](../railway.toml)
-(`GET /` health check, 1 replica, restart-on-failure). On Railway, connect
-the repo (autodeploy from `main`) or run `railway up` from the repo root;
-no environment variables are required.
+check on `GET /`. Railway config is defined in the root
+[`.railway/railway.ts`](../.railway/railway.ts) (Railway IaC — the old
+`railway.toml` was removed; CaC is deprecated). The IaC file declares the
+`GET /` healthcheck (timeout 60s), the GitHub deploy source, 1 replica, and
+the `bifrost.parag.tech` domain; the restart policy remains
+dashboard-managed. On Railway, connect the repo (autodeploy from
+`main`) or run `railway up` from the repo root; no environment variables are
+required. Config changes are manual local steps — `railway config plan` /
+`railway config apply`; CI stays deploy-free and only typechecks the IaC
+file. See the root [README](../README.md#deploy-to-railway).

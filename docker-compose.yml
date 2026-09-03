@@ -4,7 +4,7 @@ services:
       context: .
       # Root Dockerfile builds the Next.js static export in a Node stage and
       # serves it from an unprivileged nginx runtime on :8080. Same image
-      # Railway deploys from (see railway.toml).
+      # Railway deploys from (see .railway/railway.ts).
       dockerfile: Dockerfile
     ports:
       - "127.0.0.1:8080:8080"
