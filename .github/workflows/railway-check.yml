@@ -1,0 +1,41 @@
+name: Railway IaC check
+
+on:
+  pull_request:
+    paths:
+      - ".railway/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/railway-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - ".railway/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/railway-check.yml"
+
+permissions:
+  contents: read
+
+# Deploy-free: this CI never talks to Railway — no token, no plan, no apply,
+# no deploy. It only validates the IaC file. Live config changes are made
+# locally with `railway config plan` / `railway config apply` (see README).
+jobs:
+  typecheck:
+    name: Typecheck .railway/railway.ts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install root deps (Railway IaC SDK + typescript)
+        run: npm ci
+
+      - name: Typecheck IaC file against SDK types
+        run: npx tsc --noEmit --strict .railway/railway.ts
