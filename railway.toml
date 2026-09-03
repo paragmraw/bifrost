@@ -1,0 +1,19 @@
+[build]
+# Multi-stage root Dockerfile: builds the Next.js static export (Node stage)
+# and serves it from an unprivileged nginx runtime on :8080.
+# The build context is the repo root.
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Healthcheck: poll / — the HTML route in nginx.conf doubles as the check,
+# same single-origin pattern as nyaya.
+healthcheckPath = "/"
+healthcheckTimeout = 60
+healthcheckInterval = 30
+
+# The frontend is stateless static files — one replica is plenty; scale up
+# later without code changes.
+replicas = 1
+
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
