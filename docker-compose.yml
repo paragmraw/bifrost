@@ -1,0 +1,29 @@
+services:
+  web:
+    build:
+      context: .
+      # Root Dockerfile builds the Next.js static export in a Node stage and
+      # serves it from an unprivileged nginx runtime on :8080. Same image
+      # Railway deploys from (see railway.toml).
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+    # Hardening: read-only root, no-new-privileges, drop all caps, cap PIDs/mem.
+    # The nginx-unprivileged image keeps cache/pid/temp under /tmp, so a tmpfs
+    # on /tmp keeps it fully functional with a read-only root.
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 128
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
