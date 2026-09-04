@@ -1,10 +1,13 @@
 import Terminal from "../Terminal";
+import ConduitDiagram from "../ConduitDiagram";
 
 export default function HowItWorks() {
   return (
     <section className="section" id="tab-how" data-tab-section suppressHydrationWarning>
       <div className="container grid-2-1">
-        <div className="card">
+        <span className="hud hud-tag" aria-hidden="true">BFR-02 · routing</span>
+        <ConduitDiagram data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties} />
+        <div className="card" data-stagger style={{ "--stagger-i": 1 } as React.CSSProperties}>
           <Terminal
             title="client.json"
             status="client config"
@@ -27,7 +30,7 @@ export default function HowItWorks() {
             <span className="dim">{"}"}</span>
           </Terminal>
         </div>
-        <ol className="steps stack" style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        <ol className="steps stack" data-stagger style={{ listStyle: "none", padding: 0, margin: 0, "--stagger-i": 2 } as React.CSSProperties}>
           <li>
             <span className="step-num num">01</span>
             <div>

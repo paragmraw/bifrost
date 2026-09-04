@@ -57,6 +57,8 @@ export default function TabViewport({ children }: { children: ReactNode }) {
           s.scrollTop = 0;
         }
       });
+      // Aurora shader listens for this to ease its intensity per tab.
+      window.dispatchEvent(new CustomEvent("bifrost:tabchange", { detail: id }));
     }
 
     function goTo(id: string) {
@@ -155,6 +157,37 @@ export default function TabViewport({ children }: { children: ReactNode }) {
     const onToggleClick = () => setMenu(!menuOpen);
     btn?.addEventListener("click", onToggleClick);
 
+    // Pointer glow: on precise pointers, feed cursor coords to CSS custom props
+    // (normalized 0-1 in --mx-n/--my-n, pixels in --mx/--my) for hover effects.
+    let removeGlow: (() => void) | null = null;
+    if (
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      const rootStyle = document.documentElement.style;
+      let glowRaf = 0;
+      let lastMove: PointerEvent | null = null;
+      const applyGlow = () => {
+        glowRaf = 0;
+        const e = lastMove;
+        if (!e) return;
+        lastMove = null;
+        rootStyle.setProperty("--mx-n", String(e.clientX / window.innerWidth));
+        rootStyle.setProperty("--my-n", String(e.clientY / window.innerHeight));
+        rootStyle.setProperty("--mx", `${e.clientX}px`);
+        rootStyle.setProperty("--my", `${e.clientY}px`);
+      };
+      const onPointerMove = (e: PointerEvent) => {
+        lastMove = e;
+        if (!glowRaf) glowRaf = requestAnimationFrame(applyGlow);
+      };
+      window.addEventListener("pointermove", onPointerMove, { passive: true });
+      removeGlow = () => {
+        cancelAnimationFrame(glowRaf);
+        window.removeEventListener("pointermove", onPointerMove);
+      };
+    }
+
     // Initial state
     goTo(currentId());
 
@@ -166,6 +199,7 @@ export default function TabViewport({ children }: { children: ReactNode }) {
       document.removeEventListener("touchend", onTouchEnd);
       document.removeEventListener("click", onDocClick);
       btn?.removeEventListener("click", onToggleClick);
+      removeGlow?.();
       if (wheelTimer) clearTimeout(wheelTimer);
     };
   }, []);

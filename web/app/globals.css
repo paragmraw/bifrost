@@ -1,14 +1,39 @@
 :root {
-  --bg:      #ffffff;
-  --surface: #f5f5f7;
-  --fg:      #0a0a3c;
-  --muted:   #6b6b8a;
-  --border:  #e4e4f0;
-  --accent:  #3c1e96;
+  /* Dark theme — deep indigo-black foundation (supersedes the light export tokens;
+     see scratch/bifrost/brand-spec.md deviation note, 2026-09-04) */
+  --bg:      #060418;
+  --surface: #0d0a26;
+  --surface-2: #141036;
+  --fg:      #ecebfa;
+  --muted:   #8f8cb8;
+  --border:  #26224e;
+  --border-hi: #3b3570;
+  --accent:  #8b7cff;
+  --accent-cta: #6a4dff;
 
-  --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
-  --fg-soft:     color-mix(in oklch, var(--fg) 6%, transparent);
+  --accent-soft: color-mix(in oklch, var(--accent) 16%, transparent);
+  --fg-soft:     color-mix(in oklch, var(--fg) 7%, transparent);
   --accent-hover: color-mix(in oklch, var(--accent) 84%, black);
+
+  /* code syntax tokens */
+  --syn-k:  #a49bff;
+  --syn-s:  #9fd6ff;
+  --syn-cm: #6f6c99;
+  --syn-n:  #ecebfa;
+
+  /* motion tokens: spring (overshoot) + decisive ease-out, both compositor-friendly */
+  --ease-spring: linear(
+    0, 0.006, 0.025 2.4%, 0.071 4.9%, 0.137 7.3%, 0.227 9.8%, 0.331 12.3%,
+    0.45 14.9%, 0.55 17.5%, 0.648 20.2%, 0.73 23%, 0.795 26%, 0.845 29.2%,
+    0.881 32.3%, 0.905 35.7%, 0.919 39.4%, 0.926 44%, 0.927 50.2%, 0.923 57.5%,
+    0.918 63%, 0.925 68.4%, 0.941 74%, 0.962 79%, 0.979 84%, 0.991 89.5%,
+    0.998 95.5%, 1
+  );
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* cursor-reactive glow position (TabViewport writes the normalized pair) */
+  --mx: 50vw; --my: 45vh;
+  --mx-n: 0.5; --my-n: 0.45;
 
   --font-display: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-body:    var(--font-inter), Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -54,6 +79,46 @@ button { font: inherit; cursor: pointer; }
 p { text-wrap: pretty; }
 h1, h2, h3, h4 { text-wrap: balance; }
 
+/* --- Atmosphere layers: baked grain over everything, 1px grid under content --- */
+/* Grain is a static tiled image rasterized once — never a live feTurbulence filter. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background: url(/grain.png);
+  background-size: 96px 96px;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--fg) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--fg) 7%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse 120% 100% at 50% 40%, black 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 120% 100% at 50% 40%, black 30%, transparent 75%);
+  opacity: 0.5;
+}
+
+/* HUD micro-labels: mono corner metadata, reads as instrument-panel annotation */
+.hud {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in oklch, var(--muted) 60%, transparent);
+  user-select: none;
+}
+.section > .container { position: relative; }
+.hud-tag { position: absolute; top: 0; right: 0; }
+
 .container { max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
 .section { padding-block: clamp(20px, 2.4vw, 40px); }
 .section + .section { border-top: 1px solid var(--border); }
@@ -61,6 +126,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
 /* Snap viewport: page never scrolls; sections stack and translate on tab change */
 .viewport {
   position: relative;
+  z-index: 1; /* above the aurora (z0) and grid overlay (body::after z0) */
   height: calc(100dvh - 56px - 40px); /* minus topnav and fixed footer */
   overflow: hidden;
 }
@@ -88,26 +154,133 @@ h1, h2, h3, h4 { text-wrap: balance; }
   transform: translateY(0);
   transition: opacity 0.28s ease, transform 0.28s ease, visibility 0s 0s;
 }
+
+/* Tab choreography: the incoming section's children rise in a stagger, driven purely
+   by the is-active class that BOTH the pre-paint INIT_TAB script and TabViewport set —
+   zero new client code, hydration-safe by construction. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+}
+.section.is-active [data-stagger] {
+  animation: rise 0.55s var(--ease-spring) both;
+  animation-delay: calc(var(--stagger-i, 0) * 55ms);
+}
 @media (prefers-reduced-motion: reduce) {
   .viewport > .section { transition: opacity 0.01s linear, visibility 0s 0.01s; transform: none; }
   .btn, .topnav nav a, .btn-arrow::after { transition: none; }
+  .section.is-active [data-stagger] { animation: none; }
+  .aurora-drift { animation: none; }
+  .conduit .shimmer { animation: none; }
+  .conduit .conduit-dot { display: none; }
+  .term-tilt { transform: none !important; }
+  /* defensive: no scroll/timeline-driven CSS is used, reset anyway per contract */
+  *, *::before, *::after { animation-timeline: auto !important; }
 }
 .viewport > .section > .container { width: 100%; }
 .viewport > .section + .section { border-top: 0; }
+
+/* Aurora backdrop: the "wavering road of light" (Bifrost myth).
+   Two layers inside a drift wrapper — the blur() element itself is NEVER animated
+   (animating it would re-run the blur every frame); only the wrapper's transform moves. */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.aurora-drift {
+  position: absolute;
+  inset: -20%;
+  animation: aurora-drift 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.aurora-blur {
+  position: absolute;
+  inset: 0;
+  filter: blur(80px) saturate(1.4);
+  transform: scale(1.1);
+  background:
+    radial-gradient(42% 38% at 30% 28%, color-mix(in oklch, #7c5cff 34%, transparent), transparent 70%),
+    radial-gradient(36% 34% at 72% 20%, color-mix(in oklch, #4f9dff 26%, transparent), transparent 70%),
+    radial-gradient(40% 34% at 58% 68%, color-mix(in oklch, #46e6d0 16%, transparent), transparent 72%);
+}
+.aurora-pillar {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    168deg,
+    transparent 12%,
+    color-mix(in oklch, #7c5cff 10%, transparent) 30%,
+    color-mix(in oklch, #46e6d0 7%, transparent) 46%,
+    transparent 60%
+  );
+}
+@keyframes aurora-drift {
+  from { transform: translate3d(-2%, -1.5%, 0) rotate(-1.2deg); }
+  to   { transform: translate3d(2%, 2%, 0) rotate(1.2deg); }
+}
+/* Cursor-reactive glow: CSS vars written by one rAF-throttled pointermove listener
+   (TabViewport); zero animation runtime, zero React re-renders. Hover-capable only. */
+.aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(340px 260px at var(--mx) var(--my), var(--accent-soft), transparent 70%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora-drift { animation: none; }
+}
+
+/* CSS 3D tilt on the hero terminal — wrapper only (the glass element must never carry
+   the transform: backdrop-filter flattens 3D). Single-element perspective, ±2deg. */
+@media (hover: hover) and (pointer: fine) and (min-width: 921px) {
+  .term-tilt {
+    transform: perspective(1200px)
+      rotateX(calc((var(--my-n) - 0.45) * -4deg))
+      rotateY(calc((var(--mx-n) - 0.5) * 4deg));
+    transition: transform 0.2s var(--ease-out);
+  }
+}
+
+/* Glass: hero terminal only (site-wide cap: hero terminal + topnav) */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .term-glass {
+    background: color-mix(in oklch, var(--surface-2) 55%, transparent);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  }
+}
+
+/* Spectral conduit diagram (the one full-spectrum element on the page) */
+.conduit { width: 100%; height: auto; display: block; }
+.grid-2-1 > .conduit { grid-column: 1 / -1; margin-top: 26px; } /* clears the HUD tag row */
+.conduit .shimmer {
+  stroke-dasharray: 6 10;
+  animation: conduit-dash 1.2s linear infinite;
+}
+@keyframes conduit-dash {
+  /* offset delta = full dash period (6+10) so the loop never jumps */
+  to { stroke-dashoffset: -16; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .conduit .shimmer { animation: none; }
+  .conduit .conduit-dot { display: none; }
+}
 
 .skip-link {
   position: absolute;
   top: -40px; left: 8px;
   padding: 10px 14px;
-  background: var(--accent);
-  color: #ffffff;
+  background: var(--fg);
+  color: var(--bg);
   border-radius: var(--radius);
   font-size: 13px;
   font-weight: 500;
   z-index: 100;
   transition: top 0.15s ease;
 }
-.skip-link:focus, .skip-link:focus-visible { top: 8px; outline: 2px solid #ffffff; outline-offset: 2px; }
+.skip-link:focus, .skip-link:focus-visible { top: 8px; outline: 2px solid var(--fg); outline-offset: 2px; }
 
 .stack { display: flex; flex-direction: column; }
 .stack > * + * { margin-top: var(--gap-md); }
@@ -141,7 +314,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
     flex-direction: column;
     gap: 0;
     z-index: 11;
-    box-shadow: 0 12px 32px -20px color-mix(in oklch, var(--fg) 35%, transparent);
+    box-shadow: 0 12px 32px -20px color-mix(in oklch, black 45%, transparent);
   }
   .topnav nav.is-open { display: flex; }
   .topnav nav.is-open a {
@@ -161,6 +334,10 @@ h1, h2, h3, h4 { text-wrap: balance; }
   :root { --gutter: 16px; }
   .topnav { height: 52px; }
   .topnav-inner { grid-template-columns: 1fr auto; column-gap: var(--gap-sm); }
+  /* three zones don't fit two columns — the CTA lives in the open-menu dropdown */
+  .topnav-zone--right .btn-primary { display: none; }
+  /* decorative corner tags collide with real content at this width */
+  .hud-tag { display: none; }
   .topnav-zone--right { gap: 4px; min-width: 0; }
   .topnav-zone--center { position: static; display: block; min-width: 0; }
   .topnav-zone--left { min-width: 0; }
@@ -237,7 +414,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
 .topnav {
   position: sticky; top: 0; z-index: 10;
   height: 56px;
-  background: color-mix(in oklch, var(--bg) 90%, transparent);
+  background: color-mix(in oklch, var(--bg) 78%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
@@ -274,7 +451,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
   left: 0; right: 0;
   bottom: -18px;
   height: 2px;
-  background: var(--fg);
+  background: var(--accent);
   border-radius: 1px;
 }
 .topnav nav a[aria-current="true"]:focus-visible { outline-offset: 8px; }
@@ -294,8 +471,8 @@ h1, h2, h3, h4 { text-wrap: balance; }
 }
 .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn:active { transform: translateY(1px); }
-.btn-primary { background: var(--accent); color: #ffffff; border-color: var(--accent); }
-.btn-primary:hover { background: color-mix(in oklch, var(--accent) 87%, black); }
+.btn-primary { background: var(--accent-cta); color: var(--bg); border-color: var(--accent-cta); }
+.btn-primary:hover { background: color-mix(in oklch, var(--accent-cta) 85%, white); }
 .btn-secondary { background: transparent; color: var(--fg); border-color: var(--border); }
 .btn-secondary:hover { border-color: var(--fg); }
 .btn-ghost { background: transparent; color: var(--fg); border-color: transparent; padding-inline: 8px; }
@@ -328,6 +505,26 @@ h1, h2, h3, h4 { text-wrap: balance; }
 .feature h3 { margin-bottom: 6px; }
 .feature p  { margin: 0; color: var(--muted); font-size: 15px; }
 
+/* Bento: explicit hierarchy (hero cell 2× area) instead of a uniform card wall */
+.features-bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    "hero hero keys"
+    "audit audit keys";
+  gap: var(--gap-lg);
+}
+.bento-hero  { grid-area: hero; }
+.bento-keys  { grid-area: keys; }
+.bento-audit { grid-area: audit; }
+@media (max-width: 920px) {
+  .features-bento {
+    grid-template-columns: 1fr;
+    grid-template-areas: "hero" "keys" "audit";
+    gap: var(--gap-lg);
+  }
+}
+
 .hero { padding-block: clamp(20px, 3vw, 40px); }
 .hero h1 { margin-bottom: var(--gap-sm); }
 .hero .lead { margin-bottom: var(--gap-md); }
@@ -346,7 +543,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 20px 60px -28px color-mix(in oklch, var(--fg) 35%, transparent);
+  box-shadow: 0 24px 80px -32px color-mix(in oklch, black 60%, transparent);
   overflow: hidden;
 }
 .term-bar { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-bottom: 1px solid var(--border); }
@@ -372,12 +569,12 @@ h1, h2, h3, h4 { text-wrap: balance; }
   margin-left: 10px;
   padding-left: 14px;
 }
-.code .cm { color: var(--muted); }
-.code .k  { color: var(--fg); font-weight: 500; }
-.code .s  { color: var(--muted); }
-.code .n  { color: var(--fg); }
-.code .p  { color: var(--muted); }
-.code .dim { color: var(--muted); }
+.code .cm { color: var(--syn-cm); }
+.code .k  { color: var(--syn-k); font-weight: 500; }
+.code .s  { color: var(--syn-s); }
+.code .n  { color: var(--syn-n); }
+.code .p  { color: var(--syn-cm); }
+.code .dim { color: var(--syn-cm); }
 .log-line { display: grid; grid-template-columns: 7ch 1fr 8ch; gap: 12px; padding: 6px 16px; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px; align-items: baseline; }
 .log-line .t { color: var(--muted); }
 .log-line .ok { color: var(--fg); }

@@ -7,9 +7,7 @@ export default function PageFoot() {
         left: 0,
         right: 0,
         bottom: 0,
-        background: "color-mix(in oklch, var(--bg) 92%, transparent)",
-        backdropFilter: "blur(14px)",
-        WebkitBackdropFilter: "blur(14px)",
+        background: "color-mix(in oklch, var(--bg) 96%, transparent)",
         zIndex: 5,
       }}
     >

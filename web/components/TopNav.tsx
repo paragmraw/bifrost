@@ -10,7 +10,7 @@ export default function TopNav() {
               aria-current on these links before React hydrates; that is intentional */}
           <a href="#tab-hero" data-tab="tab-hero" aria-label="Bifrost — home" suppressHydrationWarning>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="logo-mark" src="/logo.webp" alt="Bifrost" />
+            <img className="logo-mark" src="/logo-light.webp" alt="Bifrost" />
           </a>
         </div>
         <div className="topnav-zone topnav-zone--center">

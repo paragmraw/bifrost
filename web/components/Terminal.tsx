@@ -16,15 +16,17 @@ export default function Terminal({
   children,
   footer,
   style,
+  glass,
 }: {
   title: string;
   status: string;
   children: ReactNode;
   footer?: ReactNode;
   style?: React.CSSProperties;
+  glass?: boolean;
 }) {
   return (
-    <div className="term" style={style}>
+    <div className={glass ? "term term-glass" : "term"} style={style}>
       <div className="term-bar">
         <span className="dot"></span>
         <span className="dot"></span>

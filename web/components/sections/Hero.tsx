@@ -8,14 +8,15 @@ export default function Hero() {
   return (
     <section className="section hero" id="tab-hero" data-tab-section suppressHydrationWarning>
       <div className="container hero-split">
+        <span className="hud hud-tag" aria-hidden="true">BFR-01 · access layer</span>
         <div>
-          <p className="eyebrow">Model Context Protocol · access layer</p>
-          <h1>One secure endpoint for every MCP server your team trusts.</h1>
-          <p className="lead" style={{ marginTop: 20 }}>
+          <p className="eyebrow" data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>Model Context Protocol · access layer</p>
+          <h1 data-stagger style={{ "--stagger-i": 1 } as React.CSSProperties}>One secure endpoint for every MCP server your team trusts.</h1>
+          <p className="lead" data-stagger style={{ marginTop: 20, "--stagger-i": 2 } as React.CSSProperties}>
             Bifrost sits between your AI tooling and a fleet of MCP servers — a single base URL to
             mount, keys you can scope and rotate, and a live audit log of every invocation.
           </p>
-          <div className="hero-cta" style={{ marginTop: 28 }}>
+          <div className="hero-cta" data-stagger style={{ marginTop: 28, "--stagger-i": 3 } as React.CSSProperties}>
             <a className="btn btn-primary" href="#tab-how" data-tab="tab-how" suppressHydrationWarning>
               Get started
             </a>
@@ -23,11 +24,12 @@ export default function Hero() {
               <GitHubIcon />View on GitHub
             </a>
           </div>
-          <p className="meta" style={{ marginTop: 16 }}>
+          <p className="meta" data-stagger style={{ marginTop: 16, "--stagger-i": 4 } as React.CSSProperties}>
             Docker install · five-minute setup · self-host or cloud
           </p>
         </div>
-        <Terminal title="gateway.yaml" status="live · 3 servers" footer={
+        <div className="term-tilt" data-stagger style={{ "--stagger-i": 5 } as React.CSSProperties}>
+        <Terminal title="gateway.yaml" status="live · 3 servers" glass footer={
           <>
             <LogLine t="01:48:22" status="200">
               GET /mcp · github.get_pull
@@ -56,9 +58,9 @@ export default function Hero() {
           <br />
           <br />
           <span className="k">keys:</span>
-          <br />
           &nbsp; <span className="s">rotate</span><span className="cm">: 30d · scopes: tools, prompts</span>
         </Terminal>
+        </div>
       </div>
     </section>
   );
