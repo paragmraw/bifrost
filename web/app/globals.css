@@ -243,13 +243,11 @@ body::after {
   }
 }
 
-/* Glass: hero terminal only (site-wide cap: hero terminal + topnav) */
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .term-glass {
-    background: color-mix(in oklch, var(--surface-2) 55%, transparent);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  }
+/* Liquid glass material: defined at FILE END (see the cascade note there) — the base
+   .term rule above sets an opaque background, and an earlier .term-glass block lost
+   that race (equal specificity, earlier in the file), leaving the terminals opaque. */
+.term-glass > .term-bar {
+  background: color-mix(in oklch, white 4%, transparent);
 }
 
 /* Spectral conduit diagram (the one full-spectrum element on the page) */
@@ -432,8 +430,8 @@ body::after {
   position: sticky; top: 0; z-index: 10;
   height: 56px;
   background: color-mix(in oklch, var(--bg) 78%, transparent);
+  /* unprefixed only — see the .term-glass @supports note for the Lightning CSS gotcha */
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
 }
 .topnav-inner {
@@ -621,4 +619,45 @@ body::after {
   .steps li + li { margin-top: 20px; }
   .card { padding: 14px 16px; }
   .section { padding-block: 8px; }
+}
+
+/* Liquid glass: hero terminal + how-it-works terminal (site-wide cap: these two + topnav).
+   MATERIAL RECIPE: translucent tint + heavy backdrop blur (in @supports below), a specular
+   hairline rim that catches light at the top edge, an internal diagonal sheen (::before,
+   negative z-index so it paints above the glass but under the text), and a soft refraction
+   shadow beneath. .term-glass carries position:relative for the sheen; the 3D tilt stays on
+   the .term-tilt wrapper (backdrop-filter flattens transformed children).
+   CASCADE NOTE: this block MUST live at the end of the file — the base `.term` rule above
+   sets an opaque background, and with equal specificity the later declaration wins. */
+.term-glass {
+  position: relative;
+  border-color: color-mix(in oklch, var(--border-hi) 55%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 22%, transparent),
+    inset 1px 0 0 color-mix(in oklch, white 8%, transparent),
+    inset 0 -1px 0 color-mix(in oklch, black 25%, transparent),
+    inset 0 0 28px color-mix(in oklch, white 3%, transparent),
+    0 32px 90px -36px color-mix(in oklch, black 65%, transparent);
+}
+.term-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, color-mix(in oklch, white 14%, transparent), transparent 42%),
+    radial-gradient(90% 60% at 8% 0%, color-mix(in oklch, #9fd6ff 16%, transparent), transparent 55%);
+}
+.term-glass > .term-bar {
+  background: color-mix(in oklch, white 5%, transparent);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .term-glass {
+    background: color-mix(in oklch, var(--surface-2) 68%, transparent);
+    /* Unprefixed ONLY: declaring the -webkit- pair makes Lightning CSS (Turbopack)
+       minify to the prefixed form alone, which Chromium ignores → glass never activates. */
+    backdrop-filter: blur(14px) saturate(1.25) brightness(1.02);
+  }
 }

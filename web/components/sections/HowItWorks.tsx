@@ -7,12 +7,8 @@ export default function HowItWorks() {
       <div className="container grid-2-1">
         <span className="hud hud-tag" aria-hidden="true">BFR-02 · routing</span>
         <ConduitDiagram data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties} />
-        <div className="card" data-stagger style={{ "--stagger-i": 1 } as React.CSSProperties}>
-          <Terminal
-            title="client.json"
-            status="client config"
-            style={{ border: "none", boxShadow: "none" }}
-          >
+        <div className="card card-flat" data-stagger style={{ "--stagger-i": 1 } as React.CSSProperties}>
+          <Terminal title="client.json" status="client config" glass>
             <span className="dim">{"{"}</span>
             <br />
             &nbsp; <span className="s">&quot;mcpServers&quot;</span><span className="cm">:</span> <span className="dim">{"{"}</span>
