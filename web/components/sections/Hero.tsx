@@ -14,7 +14,8 @@ export default function Hero() {
           <h1 data-stagger style={{ "--stagger-i": 1 } as React.CSSProperties}>One secure endpoint for every MCP server your team trusts.</h1>
           <p className="lead" data-stagger style={{ marginTop: 20, "--stagger-i": 2 } as React.CSSProperties}>
             Bifrost sits between your AI tooling and a fleet of MCP servers — a single base URL to
-            mount, keys you can scope and rotate, and a live audit log of every invocation.
+            mount, keys you can scope and rotate, and a live audit log of every invocation,
+            entirely on your own infrastructure.
           </p>
           <div className="hero-cta" data-stagger style={{ marginTop: 28, "--stagger-i": 3 } as React.CSSProperties}>
             <a className="btn btn-primary" href="#tab-how" data-tab="tab-how" suppressHydrationWarning>
@@ -25,7 +26,7 @@ export default function Hero() {
             </a>
           </div>
           <p className="meta" data-stagger style={{ marginTop: 16, "--stagger-i": 4 } as React.CSSProperties}>
-            Docker install · five-minute setup · self-host or cloud
+            Self-hosted · one Docker install · five-minute setup
           </p>
         </div>
         <div className="term-tilt" data-stagger style={{ "--stagger-i": 5 } as React.CSSProperties}>

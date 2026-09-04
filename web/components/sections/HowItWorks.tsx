@@ -45,7 +45,7 @@ export default function HowItWorks() {
             <span className="step-num num">03</span>
             <div>
               <h3>Issue keys, then watch it work</h3>
-              <p>Scope keys per tool or team, rotate them on a schedule, and audit every call from one dashboard.</p>
+              <p>Scope keys per tool or team, rotate them on a schedule, and audit every call from your own dashboard.</p>
             </div>
           </li>
         </ol>
