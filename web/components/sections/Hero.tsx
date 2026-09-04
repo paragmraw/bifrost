@@ -1,4 +1,5 @@
 import GitHubIcon from "../GitHubIcon";
+import { GITHUB_URL } from "../../lib/site";
 import Terminal, { LogLine } from "../Terminal";
 
 export default function Hero() {
@@ -18,7 +19,7 @@ export default function Hero() {
             <a className="btn btn-primary" href="#tab-how" data-tab="tab-how" suppressHydrationWarning>
               Get started
             </a>
-            <a className="btn btn-ghost" href="https://github.com/" target="_blank" rel="noopener">
+            <a className="btn btn-ghost" href={GITHUB_URL} target="_blank" rel="noopener">
               <GitHubIcon />View on GitHub
             </a>
           </div>

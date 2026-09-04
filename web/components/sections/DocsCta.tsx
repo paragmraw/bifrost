@@ -1,4 +1,5 @@
 import GitHubIcon from "../GitHubIcon";
+import { GITHUB_URL } from "../../lib/site";
 
 export default function DocsCta() {
   return (
@@ -8,12 +9,9 @@ export default function DocsCta() {
         <p className="lead" style={{ margin: "16px auto 32px" }}>
           Self-host it or let us run it — the config is the same either way.
         </p>
-        <a className="btn btn-primary" href="https://github.com/" target="_blank" rel="noopener">
+        <a className="btn btn-primary" href={GITHUB_URL} target="_blank" rel="noopener">
           <GitHubIcon />Read the docs
         </a>
-        <p className="meta" style={{ marginTop: 16 }}>
-          Replace with your project URL · license placeholder
-        </p>
       </div>
     </section>
   );

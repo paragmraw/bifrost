@@ -1,4 +1,5 @@
 import GitHubIcon from "./GitHubIcon";
+import { GITHUB_URL } from "../lib/site";
 
 export default function TopNav() {
   return (
@@ -18,13 +19,13 @@ export default function TopNav() {
             <a href="#tab-how" data-tab="tab-how" suppressHydrationWarning>How it works</a>
             <a href="#tab-features" data-tab="tab-features" suppressHydrationWarning>Features</a>
             <a href="#tab-docs" data-tab="tab-docs" suppressHydrationWarning>Docs</a>
-            <a className="nav-github-link" href="https://github.com/" target="_blank" rel="noopener">
+            <a className="nav-github-link" href={GITHUB_URL} target="_blank" rel="noopener">
               <GitHubIcon />View on GitHub
             </a>
           </nav>
         </div>
         <div className="topnav-zone topnav-zone--right">
-          <a className="btn btn-secondary" href="https://github.com/" target="_blank" rel="noopener">
+          <a className="btn btn-primary" href={GITHUB_URL} target="_blank" rel="noopener">
             <GitHubIcon />View on GitHub
           </a>
           <button
