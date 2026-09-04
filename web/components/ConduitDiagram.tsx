@@ -3,7 +3,25 @@
  * The trunk + fan strokes are the ONLY full-spectrum elements on the page
  * (see scratch/bifrost/brand-spec.md). Server-rendered, aria-hidden, zero JS:
  * shimmer = CSS stroke-dashoffset, traffic dots = SVG <animateMotion>.
+ *
+ * Nodes carry official marks, not names: GitHub / Atlassian / Databricks marks
+ * sit in the endpoint pills (components/BrandMarks.tsx), and the gateway node
+ * hosts the official Bifrost wordmark (/logo-light.webp — ice-white dark-theme
+ * variant). The gateway node is a pill rather than a circle so the 4.75:1
+ * wordmark fits at a readable size.
  */
+import { AtlassianMark, DatabricksMark, GitHubMark } from "./BrandMarks";
+
+// official wordmark aspect: 1862×392 (scratch/bifrost/BIFROST---Logo.jpg)
+const LOGO_ASPECT = 1862 / 392;
+const LOGO_W = 100;
+const LOGO_H = LOGO_W / LOGO_ASPECT; // ≈ 21.05
+const GATEWAY_PILL = { x: 428, y: 52, w: 144, h: 36, cx: 500, cy: 70 };
+// 16-unit standoff between path ends and node edges (as before) so traffic
+// dots read as "absorbed" by the node rather than crashing into it
+const IN_END = GATEWAY_PILL.x - 16;
+const OUT_START = GATEWAY_PILL.x + GATEWAY_PILL.w + 16;
+
 export default function ConduitDiagram(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -24,20 +42,36 @@ export default function ConduitDiagram(props: React.SVGProps<SVGSVGElement>) {
           <stop offset="0.75" stopColor="#ffd27a" />
           <stop offset="1" stopColor="#ff7ac8" />
         </linearGradient>
-        <path id="conduit-in" d="M92 70 H 452" />
-        <path id="conduit-trunk" d="M548 70 H 620 C 660 70 660 24 700 24 H 892" />
-        <path id="conduit-mid" d="M548 70 H 892" />
-        <path id="conduit-low" d="M548 70 H 620 C 660 70 660 128 700 128 H 892" />
+        <path id="conduit-in" d={`M92 70 H ${IN_END}`} />
+        <path id="conduit-trunk" d={`M${OUT_START} 70 H 620 C 660 70 660 24 700 24 H 892`} />
+        {/* mid fans out slightly (70 → 76) to land on the middle pill's center */}
+        <path id="conduit-mid" d={`M${OUT_START} 70 H 660 C 680 70 680 76 700 76 H 892`} />
+        <path id="conduit-low" d={`M${OUT_START} 70 H 620 C 660 70 660 128 700 128 H 892`} />
+        {/* userSpaceOnUse region spanning the full viewBox: percentage regions
+            collapse to 0-height on a horizontal line's bbox, and the fan-out
+            paths need coverage across the whole diagram, not just y=40..100 */}
+        <filter id="conduit-glow" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="180">
+          <feGaussianBlur stdDeviation="4" />
+        </filter>
       </defs>
 
-      {/* base monochrome strokes — always visible, motion or not */}
-      <use href="#conduit-in" className="conduit-base" stroke="var(--border)" strokeWidth="1" />
+      {/* spectral (rainbow) under-glow on every conduit run — the fan-out glows
+          are dialed down (thinner + fainter) so the access feed still out-reads them */}
+      <use href="#conduit-in" stroke="url(#conduit-spectral)" strokeWidth="13" opacity="0.75" filter="url(#conduit-glow)" />
+      <use href="#conduit-trunk" stroke="url(#conduit-spectral)" strokeWidth="6" opacity="0.35" filter="url(#conduit-glow)" />
+      <use href="#conduit-mid" stroke="url(#conduit-spectral)" strokeWidth="6" opacity="0.35" filter="url(#conduit-glow)" />
+      <use href="#conduit-low" stroke="url(#conduit-spectral)" strokeWidth="6" opacity="0.35" filter="url(#conduit-glow)" />
+
+      {/* base monochrome strokes — always visible, motion or not.
+          conduit-in gets border-hi + 1.5px: it is the primary access line and
+          must out-read the three fainter fan-out strokes (var(--border), 1px) */}
+      <use href="#conduit-in" className="conduit-base" stroke="#ffffff" strokeWidth="2" />
       <use href="#conduit-trunk" stroke="var(--border)" strokeWidth="1" />
       <use href="#conduit-mid" stroke="var(--border)" strokeWidth="1" />
       <use href="#conduit-low" stroke="var(--border)" strokeWidth="1" />
 
       {/* spectral shimmer overlay — light running along the road */}
-      <use href="#conduit-in" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="1.4" />
+      <use href="#conduit-in" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="3" />
       <use href="#conduit-trunk" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="1.4" />
       <use href="#conduit-mid" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="1.4" />
       <use href="#conduit-low" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="1.4" />
@@ -69,18 +103,36 @@ export default function ConduitDiagram(props: React.SVGProps<SVGSVGElement>) {
         <circle cx="60" cy="70" r="26" stroke="var(--border-hi)" strokeWidth="1" fill="var(--surface)" />
         <text x="60" y="74" textAnchor="middle" fill="var(--fg)">CLIENT</text>
 
-        <circle cx="500" cy="70" r="32" stroke="var(--accent)" strokeWidth="1" fill="var(--surface-2)" />
-        <text x="500" y="74" textAnchor="middle" fill="var(--accent)" fontWeight="600">BIFROST</text>
+        {/* gateway node: official Bifrost wordmark in a pill */}
+        <rect
+          x={GATEWAY_PILL.x}
+          y={GATEWAY_PILL.y}
+          width={GATEWAY_PILL.w}
+          height={GATEWAY_PILL.h}
+          rx={GATEWAY_PILL.h / 2}
+          stroke="var(--accent)"
+          strokeWidth="1"
+          fill="var(--surface-2)"
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <image
+          href="/logo-light.webp"
+          x={GATEWAY_PILL.cx - LOGO_W / 2}
+          y={GATEWAY_PILL.cy - LOGO_H / 2}
+          width={LOGO_W}
+          height={LOGO_H}
+          preserveAspectRatio="xMidYMid meet"
+        />
 
-        {/* tool endpoints as labeled pills — label lives inside its node */}
+        {/* tool endpoints as mark-bearing pills — official logos, no names */}
         <g stroke="var(--border-hi)" strokeWidth="1" fill="var(--surface)">
           <rect x="892" y="10" width="84" height="28" rx="14" />
           <rect x="892" y="62" width="84" height="28" rx="14" />
           <rect x="892" y="114" width="84" height="28" rx="14" />
         </g>
-        <text x="934" y="28" textAnchor="middle" fill="var(--muted)">github</text>
-        <text x="934" y="80" textAnchor="middle" fill="var(--muted)">postgres</text>
-        <text x="934" y="132" textAnchor="middle" fill="var(--muted)">+ n</text>
+        <GitHubMark x={924} y={14} size={20} />
+        <AtlassianMark x={924} y={66} size={20} />
+        <DatabricksMark x={924} y={118} size={20} />
       </g>
     </svg>
   );
