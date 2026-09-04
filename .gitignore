@@ -230,6 +230,10 @@ yarn-error.log*
 # Local scratch work
 scratch/
 
+# Local docs and session memory
+docs/
+.remember/
+
 # Playwright MCP artifacts
 .playwright-mcp/
 
