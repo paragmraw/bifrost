@@ -5,9 +5,10 @@ export default function Features() {
     <section className="section" id="tab-features" data-tab-section suppressHydrationWarning>
       <div className="container stack" style={{ gap: 40 }}>
         <span className="hud hud-tag" aria-hidden="true">BFR-03 · capabilities</span>
-        <div data-stagger style={{ maxWidth: "34ch", "--stagger-i": 0 } as React.CSSProperties}>
+        <div data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>
           <p className="eyebrow">What&apos;s different</p>
-          <h2 style={{ maxWidth: "30ch" }}>The access layer your fleet has been missing.</h2>
+          {/* capped at 40px so the headline breaks exactly on one line at desktop width */}
+          <h2 style={{ fontSize: "clamp(24px, 3.4vw, 40px)" }}>The access layer your fleet has been missing.</h2>
         </div>
         <div className="features-bento">
           <div className="feature card-flat bento-hero" data-stagger style={{ "--stagger-i": 1 } as React.CSSProperties}>
@@ -20,29 +21,6 @@ export default function Features() {
             </div>
             <h3>Mount once, route by tool</h3>
             <p>Point your client at one base URL. Bifrost resolves each tool call to the right server and proxies it — no per-server credentials tangled across your config.</p>
-            <svg
-              viewBox="0 0 640 64"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-              focusable="false"
-              style={{ width: "100%", height: 64, marginTop: 20, color: "var(--border-hi)" }}
-            >
-              {/* client */}
-              <circle cx="20" cy="32" r="4" fill="currentColor" stroke="none" />
-              <path d="M26 32H386" />
-              {/* gateway */}
-              <circle cx="400" cy="32" r="6" fill="var(--accent)" stroke="none" />
-              {/* fan-out */}
-              <path d="M408 30L574 11M408 32h166M408 34L574 53" />
-              {/* tools */}
-              <circle cx="582" cy="10" r="4" fill="currentColor" stroke="none" />
-              <circle cx="582" cy="32" r="4" fill="currentColor" stroke="none" />
-              <circle cx="582" cy="54" r="4" fill="currentColor" stroke="none" />
-            </svg>
           </div>
           <div className="feature card-flat bento-keys" data-stagger style={{ "--stagger-i": 2 } as React.CSSProperties}>
             <div className="feature-mark">
