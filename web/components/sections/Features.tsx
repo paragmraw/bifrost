@@ -7,7 +7,7 @@ export default function Features() {
         <span className="hud hud-tag" aria-hidden="true">BFR-03 · capabilities</span>
         <div data-stagger style={{ maxWidth: "34ch", "--stagger-i": 0 } as React.CSSProperties}>
           <p className="eyebrow">What&apos;s different</p>
-          <h2>The access layer your fleet has been missing.</h2>
+          <h2 style={{ maxWidth: "30ch" }}>The access layer your fleet has been missing.</h2>
         </div>
         <div className="features-bento">
           <div className="feature card-flat bento-hero" data-stagger style={{ "--stagger-i": 1 } as React.CSSProperties}>

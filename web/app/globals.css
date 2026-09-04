@@ -136,11 +136,11 @@ body::after {
 .viewport > .section {
   position: absolute;
   inset: 0;
-  /* scroll internally only when content is taller than the viewport (very short screens) */
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* Sections NEVER scroll — TabViewport scales each section's container to fit
+     (transform: scale), so content always fits its viewport at any screen size. */
+  overflow: hidden;
   display: flex;
-  align-items: safe center;
+  align-items: center;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -268,6 +268,17 @@ body::after {
   .conduit .conduit-dot { display: none; }
 }
 
+@media (max-width: 600px) {
+  .features-bento {
+    grid-template-columns: 1fr;
+    grid-template-areas: "hero" "keys" "audit";
+    gap: 22px;
+  }
+  .bento-hero > svg { height: 44px; margin-top: 12px; }
+  .features-bento .keys-micro { margin-top: 10px; padding-top: 10px; }
+  .features-bento .feature-mark { margin-bottom: 8px; }
+}
+
 .skip-link {
   position: absolute;
   top: -40px; left: 8px;
@@ -297,6 +308,9 @@ body::after {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .grid-2-1, .grid-1-2 { grid-template-columns: 1fr; }
   .hero-split { grid-template-columns: 1fr; }
+  /* Terminal stacks below the hero copy in the 601–920 band, spiking the section's
+     natural height ~200px at the 921px boundary (the "920 cliff") — hide it there. */
+  .hero .term { display: none; }
   :root { --gutter: 24px; }
   .topnav-inner { grid-template-columns: auto 1fr auto; }
   .topnav nav { gap: var(--gap-md); }
@@ -377,6 +391,9 @@ body::after {
   .hero .hero-cta { margin-top: 16px; }
   .hero .meta { margin-top: 12px; }
   .pagefoot { padding-block: 8px; font-size: 11px; }
+  /* The hint span (13px mono) wraps the fixed footer to 2 lines below ~430px,
+     breaking the 40px chrome budget the .viewport height calc assumes. */
+  .pagefoot .meta { display: none; }
   .section { padding-block: clamp(12px, 2vw, 24px); }
   .hero { padding-block: clamp(12px, 2vw, 20px); }
   .stack[style*="40px"] { gap: 20px !important; }
@@ -568,6 +585,8 @@ body::after {
   border-left: 1px solid var(--fg-soft);
   margin-left: 10px;
   padding-left: 14px;
+  /* Long URLs/tokens in code blocks must never force horizontal width */
+  overflow-wrap: anywhere;
 }
 .code .cm { color: var(--syn-cm); }
 .code .k  { color: var(--syn-k); font-weight: 500; }
@@ -582,3 +601,24 @@ body::after {
 .log-line:hover { background: var(--fg-soft); }
 
 .btn svg.gh { width: 14px; height: 14px; flex: 0 0 auto; fill: currentColor; display: inline-block; }
+
+/* Landscape phones / short screens: desktop 3-col bento fits the tiny height far
+   better than a 3-row stack (avoids MIN_SCALE pinning at e.g. 844×390). Kept at
+   file end so it wins the cascade over the base grid/gap rules above. */
+@media (max-width: 920px) and (orientation: landscape) and (max-height: 500px) {
+  .features-bento {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "hero hero keys"
+      "audit audit keys";
+  }
+  .bento-hero > svg { display: none; }
+  .features-bento .keys-micro { display: none; }
+  /* Compress the stacked-row rhythm: 56px gaps dominate a ~300px-tall stage and
+     pin sections at the MIN_SCALE floor. */
+  .grid-2-1, .grid-1-2 { gap: 20px; }
+  .stack > * + * { margin-top: 20px; }
+  .steps li + li { margin-top: 20px; }
+  .card { padding: 14px 16px; }
+  .section { padding-block: 8px; }
+}

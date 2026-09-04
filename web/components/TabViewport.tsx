@@ -5,6 +5,11 @@ import { useEffect, type ReactNode } from "react";
 const STORAGE_KEY = "bifrost.tab";
 const WHEEL_THRESHOLD = 30;
 
+// Scale floor. Below this, content would be unreadable — but the contract is
+// "no scrolling on any screen size", so we allow aggressive downscaling rather
+// than clipping. (flex-centering keeps whatever is scaled evenly framed.)
+const MIN_SCALE = 0.3;
+
 export default function TabViewport({ children }: { children: ReactNode }) {
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-tab-section]"));
@@ -18,6 +23,73 @@ export default function TabViewport({ children }: { children: ReactNode }) {
 
     const indexOf = (id: string) => ORDER.indexOf(id);
     const clamp = (n: number) => Math.max(0, Math.min(ORDER.length - 1, n));
+
+    // --- Fit-to-viewport scaling -------------------------------------------------
+    // Every section is height-locked to the viewport (overflow hidden). When its
+    // content is taller/wider than the viewport, we scale the section's container
+    // down with transform: scale until it fits. Result: ZERO scrolling anywhere,
+    // on every screen size — scroll gestures simply switch tabs instead.
+    // We scale the container (not the section): zooming/scaling an absolutely
+    // positioned flex section misplaces it; scaling an in-flow child is stable.
+    const scaledContainers: HTMLElement[] = [];
+
+    function fitSection(section: HTMLElement) {
+      const container = (section.firstElementChild as HTMLElement | null) ?? section;
+      if (!scaledContainers.includes(container)) scaledContainers.push(container);
+      const vw = section.clientWidth;
+      const vh = section.clientHeight;
+      if (!vw || !vh) return;
+
+      // Measure unscaled: temporarily clear the transform so scrollHeight is natural
+      const prevScale = container.style.transform;
+      container.style.transform = "none";
+      const naturalW = container.scrollWidth;
+      const naturalH = container.scrollHeight;
+      container.style.transform = prevScale;
+
+      const pad = 24; // breathing room so scaled content doesn't kiss the edges
+      const heightScale = Math.min(1, (vh - pad) / naturalH);
+      // The container is width:100%, so scrollWidth equals clientWidth when content
+      // fits — only bound by width when it actually overflows, otherwise every
+      // section would shrink ~2% for free.
+      const widthScale = naturalW > vw + 1 ? (vw - pad) / naturalW : 1;
+      const scale = Math.max(MIN_SCALE, Math.min(heightScale, widthScale));
+
+      if (scale < 0.999) {
+        container.style.transformOrigin = "center center";
+        container.style.transform = `scale(${scale})`;
+      } else {
+        // Content fits naturally — clear any previously applied scale.
+        container.style.transform = "";
+        container.style.transformOrigin = "";
+      }
+    }
+
+    function fitAll() {
+      sections.forEach(fitSection);
+    }
+
+    // Recompute scale whenever content size can change (webfonts, images, breakpoints).
+    // Observe the scaled containers, not the sections — sections are inset:0 and
+    // never change size, so observing them would fire only once.
+    const ro = new ResizeObserver(() => fitAll());
+    const observed = new Set<HTMLElement>();
+    const observeContainers = () => {
+      sections.forEach((s) => {
+        const c = s.firstElementChild as HTMLElement | null;
+        if (c && !observed.has(c)) {
+          observed.add(c);
+          ro.observe(c);
+        }
+      });
+    };
+    observeContainers();
+    fitAll();
+
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(() => fitAll()).catch(() => {});
+    }
+    window.addEventListener("resize", fitAll);
 
     function setMenu(open: boolean) {
       menuOpen = open;
@@ -80,19 +152,11 @@ export default function TabViewport({ children }: { children: ReactNode }) {
     };
     navLinks.forEach((a) => a.addEventListener("click", onNavClick));
 
-    // A section taller than the viewport (very short screens) scrolls itself:
-    // let wheel/touch scroll it natively instead of snap-switching tabs.
-    const scrollableSection = (t: EventTarget | null) => {
-      const sec = (t as HTMLElement | null)?.closest?.("[data-tab-section]") as HTMLElement | null;
-      return sec && sec.scrollHeight > sec.clientHeight + 1 ? sec : null;
-    };
-
-    // Wheel: snap between tabs on the first scroll. Sections don't scroll.
+    // Wheel: snap between tabs on the first scroll. Sections never scroll.
     let wheelAcc = 0;
     let wheelTimer: ReturnType<typeof setTimeout> | null = null;
     const onWheel = (e: WheelEvent) => {
       if (menuOpen) return;
-      if (scrollableSection(e.target)) return;
       e.preventDefault();
       wheelAcc += e.deltaY;
       if (Math.abs(wheelAcc) >= WHEEL_THRESHOLD) {
@@ -136,10 +200,6 @@ export default function TabViewport({ children }: { children: ReactNode }) {
     };
     const onTouchEnd = (e: TouchEvent) => {
       if (touchY == null || menuOpen) return;
-      if (scrollableSection(e.target)) {
-        touchY = null;
-        return;
-      }
       const dy = touchY - (e.changedTouches[0] ? e.changedTouches[0].clientY : touchY);
       if (Math.abs(dy) > 40) stepBy(dy > 0 ? 1 : -1);
       touchY = null;
@@ -201,6 +261,12 @@ export default function TabViewport({ children }: { children: ReactNode }) {
       btn?.removeEventListener("click", onToggleClick);
       removeGlow?.();
       if (wheelTimer) clearTimeout(wheelTimer);
+      ro.disconnect();
+      window.removeEventListener("resize", fitAll);
+      scaledContainers.forEach((c) => {
+        c.style.transform = "";
+        c.style.transformOrigin = "";
+      });
     };
   }, []);
 
