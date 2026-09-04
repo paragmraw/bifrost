@@ -55,26 +55,25 @@ export default function ConduitDiagram(props: React.SVGProps<SVGSVGElement>) {
         </filter>
       </defs>
 
-      {/* spectral (rainbow) under-glow on every conduit run — the fan-out glows
-          are dialed down (thinner + fainter) so the access feed still out-reads them */}
-      <use href="#conduit-in" stroke="url(#conduit-spectral)" strokeWidth="13" opacity="0.75" filter="url(#conduit-glow)" />
+      {/* glows — white halo on the access feed, rainbow halo on the fan-outs;
+          all crisp line widths are uniform 2px */}
+      <use href="#conduit-in" stroke="#ffffff" strokeWidth="6" opacity="0.35" filter="url(#conduit-glow)" />
       <use href="#conduit-trunk" stroke="url(#conduit-spectral)" strokeWidth="6" opacity="0.35" filter="url(#conduit-glow)" />
       <use href="#conduit-mid" stroke="url(#conduit-spectral)" strokeWidth="6" opacity="0.35" filter="url(#conduit-glow)" />
       <use href="#conduit-low" stroke="url(#conduit-spectral)" strokeWidth="6" opacity="0.35" filter="url(#conduit-glow)" />
 
-      {/* base monochrome strokes — always visible, motion or not.
-          conduit-in gets border-hi + 1.5px: it is the primary access line and
-          must out-read the three fainter fan-out strokes (var(--border), 1px) */}
+      {/* base strokes — always visible, motion or not. All runs are uniform 2px:
+          the access feed is solid white; the fan-outs are solid rainbow */}
       <use href="#conduit-in" className="conduit-base" stroke="#ffffff" strokeWidth="2" />
-      <use href="#conduit-trunk" stroke="var(--border)" strokeWidth="1" />
-      <use href="#conduit-mid" stroke="var(--border)" strokeWidth="1" />
-      <use href="#conduit-low" stroke="var(--border)" strokeWidth="1" />
+      <use href="#conduit-trunk" stroke="url(#conduit-spectral)" strokeWidth="2" />
+      <use href="#conduit-mid" stroke="url(#conduit-spectral)" strokeWidth="2" />
+      <use href="#conduit-low" stroke="url(#conduit-spectral)" strokeWidth="2" />
 
-      {/* spectral shimmer overlay — light running along the road */}
-      <use href="#conduit-in" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="3" />
-      <use href="#conduit-trunk" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="1.4" />
-      <use href="#conduit-mid" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="1.4" />
-      <use href="#conduit-low" className="shimmer" stroke="url(#conduit-spectral)" strokeWidth="1.4" />
+      {/* spectral shimmer overlay — white light pulses along the rainbow fan-outs
+          (on the white access feed a same-color shimmer is invisible, so it skips it) */}
+      <use href="#conduit-trunk" className="shimmer" stroke="#ffffff" strokeWidth="2" />
+      <use href="#conduit-mid" className="shimmer" stroke="#ffffff" strokeWidth="2" />
+      <use href="#conduit-low" className="shimmer" stroke="#ffffff" strokeWidth="2" />
 
       {/* request dots riding the paths — staggered so it reads as traffic, not a screensaver */}
       <circle className="conduit-dot" r="2.5" fill="#9fd6ff">
