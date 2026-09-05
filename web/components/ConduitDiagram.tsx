@@ -115,7 +115,6 @@ export default function ConduitDiagram(props: React.SVGProps<SVGSVGElement>) {
           strokeWidth="1"
           fill="var(--surface-2)"
         />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <image
           href="/logo-light.webp"
           x={GATEWAY_PILL.cx - LOGO_W / 2}
