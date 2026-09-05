@@ -8,7 +8,6 @@ export default function Hero() {
   return (
     <section className="section hero" id="tab-hero" data-tab-section suppressHydrationWarning>
       <div className="container hero-split">
-        <span className="hud hud-tag" aria-hidden="true">BFR-01 · access layer</span>
         <div>
           <p className="eyebrow" data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>Model Context Protocol · access layer</p>
           <h1 data-stagger style={{ "--stagger-i": 1 } as React.CSSProperties}>One secure endpoint for every MCP server your team trusts.</h1>

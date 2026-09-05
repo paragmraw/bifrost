@@ -4,7 +4,6 @@ export default function Features() {
   return (
     <section className="section" id="tab-features" data-tab-section suppressHydrationWarning>
       <div className="container stack" style={{ gap: 40 }}>
-        <span className="hud hud-tag" aria-hidden="true">BFR-03 · capabilities</span>
         <div data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>
           <p className="eyebrow">What&apos;s different</p>
           {/* capped at 40px so the headline breaks exactly on one line at desktop width */}

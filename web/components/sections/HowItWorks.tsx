@@ -8,7 +8,6 @@ export default function HowItWorks() {
   return (
     <section className="section" id="tab-how" data-tab-section suppressHydrationWarning>
       <div className="container stack" style={{ gap: 24 }}>
-        <span className="hud hud-tag" aria-hidden="true">BFR-02 · routing</span>
         <div data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>
           <p className="eyebrow">How it works</p>
           <h2 style={{ fontSize: "clamp(24px, 3.4vw, 40px)" }}>Three moves. One endpoint.</h2>

@@ -107,17 +107,7 @@ body::after {
   opacity: 0.5;
 }
 
-/* HUD micro-labels: mono corner metadata, reads as instrument-panel annotation */
-.hud {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: color-mix(in oklch, var(--muted) 60%, transparent);
-  user-select: none;
-}
 .section > .container { position: relative; }
-.hud-tag { position: absolute; top: 0; right: 0; }
 
 .container { max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
 .section { padding-block: clamp(20px, 2.4vw, 40px); }
@@ -169,7 +159,7 @@ body::after {
   .viewport > .section { transition: opacity 0.01s linear, visibility 0s 0.01s; transform: none; }
   .btn, .topnav nav a, .btn-arrow::after { transition: none; }
   .section.is-active [data-stagger] { animation: none; }
-  .topnav nav.is-open a, .topnav nav.is-open .nav-meta { animation: none; }
+  .topnav nav.is-open a { animation: none; }
   .aurora-drift { animation: none; }
   .conduit .shimmer { animation: none; }
   .conduit .conduit-dot { display: none; }
@@ -408,11 +398,8 @@ body::after {
     border-radius: 1px;
     background: var(--accent);
   }
-  /* CTA + HUD label pinned to the bottom of the takeover */
+  /* CTA pinned to the bottom of the takeover */
   .topnav nav .nav-github-link { display: flex; justify-content: center; margin-top: auto; }
-  /* pointer-events: none — the label is decorative (aria-hidden) and must not
-     swallow taps meant for the empty overlay (which closes the menu) */
-  .topnav nav .nav-meta { margin-top: 16px; text-align: center; pointer-events: none; }
   /* Staggered spring entrance — same rise keyframes as tab changes. Wrapped in
      no-preference: these sit after the reduced-motion block, so `animation: none`
      there can't win the cascade (same pattern as the .aurora-blur transition). */
@@ -422,7 +409,6 @@ body::after {
     .topnav nav.is-open a:nth-child(3) { animation-delay: 140ms; }
     .topnav nav.is-open a:nth-child(4) { animation-delay: 210ms; }
     .topnav nav.is-open a.nav-github-link { animation-delay: 260ms; }
-    .topnav nav.is-open .nav-meta { animation: rise 0.55s var(--ease-out) 0.32s both; }
   }
 }
 
@@ -435,7 +421,6 @@ body::after {
   /* three zones don't fit two columns — the CTA lives in the open-menu dropdown */
   .topnav-zone--right .btn-primary { display: none; }
   /* decorative corner tags collide with real content at this width */
-  .hud-tag { display: none; }
   .topnav-zone--right { gap: 4px; min-width: 0; }
   .topnav-zone--center { position: static; display: block; min-width: 0; }
   .topnav-zone--left { min-width: 0; }
@@ -489,7 +474,7 @@ body::after {
   .topnav nav { display: flex; gap: var(--gap-lg); position: static; flex-direction: row; padding: 0; border: 0; background: transparent; }
   .topnav nav a { padding: 4px 0; }
   .topnav .nav-toggle { display: none; }
-  .topnav .nav-num, .topnav .nav-meta { display: none; }
+  .topnav .nav-num { display: none; }
   .nav-github-link { display: none; }
   .btn-secondary { display: inline-flex; }
 }

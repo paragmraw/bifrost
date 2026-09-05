@@ -15,8 +15,8 @@ export default function TopNav() {
         </div>
         <div className="topnav-zone topnav-zone--center">
           <nav id="primary-nav" aria-label="Primary">
-            {/* nav-num indices + nav-meta label render only in the mobile takeover
-                (≤920px); both are display:none on desktop */}
+            {/* nav-num indices render only in the mobile takeover (≤920px);
+                display:none on desktop */}
             <a href="#tab-hero" data-tab="tab-hero" suppressHydrationWarning>
               <span className="nav-num num" aria-hidden="true">01</span>Product
             </a>
@@ -32,7 +32,6 @@ export default function TopNav() {
             <a className="nav-github-link btn btn-primary" href={GITHUB_URL} target="_blank" rel="noopener">
               <GitHubIcon />View on GitHub
             </a>
-            <span className="nav-meta hud" aria-hidden="true">BFR-NAV · SELF-HOSTED</span>
           </nav>
         </div>
         <div className="topnav-zone topnav-zone--right">
