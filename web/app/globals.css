@@ -372,6 +372,10 @@ body::after {
      toggle above it — raise the logo/CTA zones (the overlay lives in the center
      zone, which must stay unstacked) */
   .topnav-zone--left, .topnav-zone--right { position: relative; z-index: 11; }
+  /* While the takeover is open on tablet widths, hide the bar's own GitHub CTA —
+     the overlay already carries one at the bottom (visibility, not display, so
+     the bar layout doesn't shift) */
+  html.menu-open .topnav-zone--right .btn-primary { visibility: hidden; }
   /* Oversized mono rows with HUD indices — the instrument-panel vocabulary.
      .is-open outranks the later base `.topnav nav a` rule (13px). */
   .topnav nav.is-open a {
@@ -406,7 +410,9 @@ body::after {
   }
   /* CTA + HUD label pinned to the bottom of the takeover */
   .topnav nav .nav-github-link { display: flex; justify-content: center; margin-top: auto; }
-  .topnav nav .nav-meta { margin-top: 16px; text-align: center; }
+  /* pointer-events: none — the label is decorative (aria-hidden) and must not
+     swallow taps meant for the empty overlay (which closes the menu) */
+  .topnav nav .nav-meta { margin-top: 16px; text-align: center; pointer-events: none; }
   /* Staggered spring entrance — same rise keyframes as tab changes. Wrapped in
      no-preference: these sit after the reduced-motion block, so `animation: none`
      there can't win the cascade (same pattern as the .aurora-blur transition). */
