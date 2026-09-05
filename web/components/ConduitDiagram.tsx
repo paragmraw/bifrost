@@ -26,7 +26,9 @@ export default function ConduitDiagram(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       className="conduit"
-      viewBox="0 0 1000 180"
+      /* cropped to the ink: top pill starts y=10 (glow reaches ~9), lowest pill
+         ends y=142 — 0..180 left ~38 units of dead space under the diagram */
+      viewBox="0 4 1000 140"
       fill="none"
       role="presentation"
       aria-hidden="true"

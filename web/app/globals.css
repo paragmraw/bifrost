@@ -252,7 +252,38 @@ body::after {
 
 /* Spectral conduit diagram (the one full-spectrum element on the page) */
 .conduit { width: 100%; height: auto; display: block; }
-.grid-2-1 > .conduit { grid-column: 1 / -1; margin-top: 26px; } /* clears the HUD tag row */
+/* How it works: the conduit is the section hero; steps pair with their artifacts below */
+/* the inline row-gap on #tab-how's container owns the vertical rhythm — the generic
+   .stack > * + * margin-top would double-space on top of it (gap + margin stack) */
+#tab-how .container.stack > * + * { margin-top: 0; }
+.how-steps { align-items: start; }
+.how-step .step-num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 10px;
+}
+.how-step h3 { margin-bottom: 6px; }
+.how-step p { margin: 0; color: var(--muted); font-size: 14px; }
+.how-step .term { margin-top: 18px; }
+/* narrower column than the hero terminal — one font step down keeps lines unbroken */
+.how-step .term .code { font-size: 11px; }
+.route-micro {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  display: grid;
+  gap: 6px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.route-micro div { display: flex; gap: 10px; align-items: baseline; }
+.route-micro .k { color: var(--muted); flex: 0 0 11ch; }
+.route-micro .cm { color: var(--muted); }
+.audit-micro { margin-top: 18px; }
+/* full-width hairlines, no card padding — keeps single-line entries in a 1/3 column */
+.audit-micro .log-line { padding-inline: 0; }
 .conduit .shimmer {
   stroke-dasharray: 6 10;
   animation: conduit-dash 1.2s linear infinite;
@@ -298,13 +329,12 @@ body::after {
 .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap-lg); }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-lg); }
 .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap-md); }
-.grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: var(--gap-xl); row-gap: var(--gap-lg); align-items: start; }
 .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: var(--gap-xl); align-items: start; }
 
 /* Tablet: collapse multi-column grids to keep readable line length */
 @media (max-width: 920px) {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  .grid-2-1, .grid-1-2 { grid-template-columns: 1fr; }
+  .grid-1-2 { grid-template-columns: 1fr; }
   .hero-split { grid-template-columns: 1fr; }
   /* Terminal stacks below the hero copy in the 601–920 band, spiking the section's
      natural height ~200px at the 921px boundary (the "920 cliff") — hide it there. */
@@ -380,8 +410,9 @@ body::after {
   .hero .term { box-shadow: none; display: none; }
   .hero .term .log-line:nth-of-type(2) { display: none; }
   .stack > * + * { margin-top: 14px; }
-  .grid-2-1 { grid-template-columns: 1fr !important; }
   .grid-3 { grid-template-columns: 1fr; gap: 16px; }
+  .how-step p { font-size: 13px; }
+  .how-step .term { margin-top: 14px; }
   .feature h3 { font-size: 19px; margin-bottom: 4px; }
   .feature p { font-size: 14px; line-height: 1.5; }
   .feature-mark svg { width: 20px; height: 20px; }
@@ -614,7 +645,7 @@ body::after {
   .features-bento .keys-micro { display: none; }
   /* Compress the stacked-row rhythm: 56px gaps dominate a ~300px-tall stage and
      pin sections at the MIN_SCALE floor. */
-  .grid-2-1, .grid-1-2 { gap: 20px; }
+  .grid-1-2 { gap: 20px; }
   .stack > * + * { margin-top: 20px; }
   .steps li + li { margin-top: 20px; }
   .card { padding: 14px 16px; }
