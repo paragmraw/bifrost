@@ -15,13 +15,24 @@ export default function TopNav() {
         </div>
         <div className="topnav-zone topnav-zone--center">
           <nav id="primary-nav" aria-label="Primary">
-            <a href="#tab-hero" data-tab="tab-hero" suppressHydrationWarning>Product</a>
-            <a href="#tab-how" data-tab="tab-how" suppressHydrationWarning>How it works</a>
-            <a href="#tab-features" data-tab="tab-features" suppressHydrationWarning>Features</a>
-            <a href="#tab-docs" data-tab="tab-docs" suppressHydrationWarning>Docs</a>
-            <a className="nav-github-link" href={GITHUB_URL} target="_blank" rel="noopener">
+            {/* nav-num indices + nav-meta label render only in the mobile takeover
+                (≤920px); both are display:none on desktop */}
+            <a href="#tab-hero" data-tab="tab-hero" suppressHydrationWarning>
+              <span className="nav-num num" aria-hidden="true">01</span>Product
+            </a>
+            <a href="#tab-how" data-tab="tab-how" suppressHydrationWarning>
+              <span className="nav-num num" aria-hidden="true">02</span>How it works
+            </a>
+            <a href="#tab-features" data-tab="tab-features" suppressHydrationWarning>
+              <span className="nav-num num" aria-hidden="true">03</span>Features
+            </a>
+            <a href="#tab-docs" data-tab="tab-docs" suppressHydrationWarning>
+              <span className="nav-num num" aria-hidden="true">04</span>Docs
+            </a>
+            <a className="nav-github-link btn btn-primary" href={GITHUB_URL} target="_blank" rel="noopener">
               <GitHubIcon />View on GitHub
             </a>
+            <span className="nav-meta hud" aria-hidden="true">BFR-NAV · SELF-HOSTED</span>
           </nav>
         </div>
         <div className="topnav-zone topnav-zone--right">

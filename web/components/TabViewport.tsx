@@ -93,6 +93,8 @@ export default function TabViewport({ children }: { children: ReactNode }) {
 
     function setMenu(open: boolean) {
       menuOpen = open;
+      // Aurora + menu CSS hook: the takeover lights the aurora up while open
+      document.documentElement.classList.toggle("menu-open", open);
       if (!btn || !nav) return;
       nav.classList.toggle("is-open", open);
       btn.setAttribute("aria-expanded", open ? "true" : "false");
@@ -207,9 +209,14 @@ export default function TabViewport({ children }: { children: ReactNode }) {
     document.addEventListener("touchstart", onTouchStart, { passive: true });
     document.addEventListener("touchend", onTouchEnd, { passive: true });
 
-    // Mobile menu: outside click closes it
+    // Mobile menu: outside click or a tap on the empty overlay closes it
     const onDocClick = (e: MouseEvent) => {
-      if (menuOpen && nav && btn && !nav.contains(e.target as Node) && !btn.contains(e.target as Node))
+      if (!menuOpen) return;
+      if (nav && e.target === nav) {
+        setMenu(false);
+        return;
+      }
+      if (nav && btn && !nav.contains(e.target as Node) && !btn.contains(e.target as Node))
         setMenu(false);
     };
     document.addEventListener("click", onDocClick);
@@ -262,6 +269,7 @@ export default function TabViewport({ children }: { children: ReactNode }) {
       removeGlow?.();
       if (wheelTimer) clearTimeout(wheelTimer);
       ro.disconnect();
+      document.documentElement.classList.remove("menu-open");
       window.removeEventListener("resize", fitAll);
       scaledContainers.forEach((c) => {
         c.style.transform = "";
