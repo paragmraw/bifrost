@@ -234,6 +234,7 @@ scratch/
 # Local docs and session memory
 docs/
 .remember/
+plan/
 
 # Playwright MCP artifacts
 .playwright-mcp/
