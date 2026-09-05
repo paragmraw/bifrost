@@ -583,6 +583,10 @@ body::after {
 .btn:active { transform: translateY(1px); }
 .btn-primary { background: var(--accent-cta); color: var(--bg); border-color: var(--accent-cta); }
 .btn-primary:hover { background: color-mix(in oklch, var(--accent-cta) 85%, white); }
+/* Nav CTA is deliberately more compact than the hero CTAs — the topnav bar is
+   dense, and the 15px/11px hero sizing reads oversized next to 13px nav links */
+.topnav .btn-primary { padding: 7px 14px; font-size: 13px; gap: 6px; }
+.topnav .btn-primary svg.gh { width: 13px; height: 13px; }
 .btn-secondary { background: transparent; color: var(--fg); border-color: var(--border); }
 .btn-secondary:hover { border-color: var(--fg); }
 .btn-ghost { background: transparent; color: var(--fg); border-color: transparent; padding-inline: 8px; }
