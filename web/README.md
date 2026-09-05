@@ -12,8 +12,8 @@ npm run dev   # http://localhost:3000
 ```
 
 The page is a single snap-viewport screen: sections switch on scroll wheel,
-↑/↓/PageUp/PageDown/Home/End keys, touch swipe, or the nav. The active tab
-persists in `localStorage` under `bifrost.tab`.
+↑/↓/PageUp/PageDown/Home/End keys, touch swipe, or the nav. Every visit starts
+on the first tab (Hero) — the active tab is not persisted.
 
 ## Production build
 

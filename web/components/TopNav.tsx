@@ -6,9 +6,7 @@ export default function TopNav() {
     <header className="topnav">
       <div className="container topnav-inner">
         <div className="topnav-zone topnav-zone--left">
-          {/* suppressHydrationWarning: the pre-paint INIT_TAB script (page.tsx) sets
-              aria-current on these links before React hydrates; that is intentional */}
-          <a href="#tab-hero" data-tab="tab-hero" aria-label="Bifrost — home" suppressHydrationWarning>
+          <a href="#tab-hero" data-tab="tab-hero" aria-current="true" aria-label="Bifrost — home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="logo-mark" src="/logo-light.webp" alt="Bifrost" />
           </a>
@@ -17,16 +15,16 @@ export default function TopNav() {
           <nav id="primary-nav" aria-label="Primary">
             {/* nav-num indices render only in the mobile takeover (≤920px);
                 display:none on desktop */}
-            <a href="#tab-hero" data-tab="tab-hero" suppressHydrationWarning>
+            <a href="#tab-hero" data-tab="tab-hero" aria-current="true">
               <span className="nav-num num" aria-hidden="true">01</span>Product
             </a>
-            <a href="#tab-how" data-tab="tab-how" suppressHydrationWarning>
+            <a href="#tab-how" data-tab="tab-how">
               <span className="nav-num num" aria-hidden="true">02</span>How it works
             </a>
-            <a href="#tab-features" data-tab="tab-features" suppressHydrationWarning>
+            <a href="#tab-features" data-tab="tab-features">
               <span className="nav-num num" aria-hidden="true">03</span>Features
             </a>
-            <a href="#tab-docs" data-tab="tab-docs" suppressHydrationWarning>
+            <a href="#tab-docs" data-tab="tab-docs">
               <span className="nav-num num" aria-hidden="true">04</span>Docs
             </a>
             <a className="nav-github-link btn btn-primary" href={GITHUB_URL} target="_blank" rel="noopener">

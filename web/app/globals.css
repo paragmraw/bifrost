@@ -146,8 +146,8 @@ body::after {
 }
 
 /* Tab choreography: the incoming section's children rise in a stagger, driven purely
-   by the is-active class that BOTH the pre-paint INIT_TAB script and TabViewport set —
-   zero new client code, hydration-safe by construction. */
+   by the is-active class (static on Hero in the markup, toggled by TabViewport
+   thereafter) — zero new client code, hydration-safe by construction. */
 @keyframes rise {
   from { opacity: 0; transform: translateY(10px); }
 }

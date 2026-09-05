@@ -6,7 +6,7 @@ import ConduitDiagram from "../ConduitDiagram";
 // config, 02 the route table it produces, 03 the audit trail it leaves.
 export default function HowItWorks() {
   return (
-    <section className="section" id="tab-how" data-tab-section suppressHydrationWarning>
+    <section className="section" id="tab-how" data-tab-section>
       <div className="container stack" style={{ gap: 24 }}>
         <div data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>
           <p className="eyebrow">How it works</p>

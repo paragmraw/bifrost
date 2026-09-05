@@ -2,7 +2,7 @@ import { LogLine } from "../Terminal";
 
 export default function Features() {
   return (
-    <section className="section" id="tab-features" data-tab-section suppressHydrationWarning>
+    <section className="section" id="tab-features" data-tab-section>
       <div className="container stack" style={{ gap: 40 }}>
         <div data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>
           <p className="eyebrow">What&apos;s different</p>

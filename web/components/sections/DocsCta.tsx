@@ -3,7 +3,7 @@ import { GITHUB_URL } from "../../lib/site";
 
 export default function DocsCta() {
   return (
-    <section className="section" id="tab-docs" data-tab-section suppressHydrationWarning style={{ textAlign: "center" }}>
+    <section className="section" id="tab-docs" data-tab-section style={{ textAlign: "center" }}>
       <div className="container" style={{ maxWidth: 620, paddingTop: 26 }}>
         <h2 data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>Stop duplicating keys. Mount one gateway.</h2>
         <p className="lead" data-stagger style={{ margin: "16px auto 32px", "--stagger-i": 1 } as React.CSSProperties}>

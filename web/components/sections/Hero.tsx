@@ -3,10 +3,10 @@ import { GITHUB_URL } from "../../lib/site";
 import Terminal, { LogLine } from "../Terminal";
 
 export default function Hero() {
-  // suppressHydrationWarning (below): the pre-paint INIT_TAB script (page.tsx) adds
-  // is-active / aria-current before hydration; that is intentional
   return (
-    <section className="section hero" id="tab-hero" data-tab-section suppressHydrationWarning>
+    // is-active in the static markup: Hero is always the tab the site opens on,
+    // so first paint shows it before TabViewport's effect runs.
+    <section className="section hero is-active" id="tab-hero" data-tab-section>
       <div className="container hero-split">
         <div>
           <p className="eyebrow" data-stagger style={{ "--stagger-i": 0 } as React.CSSProperties}>Model Context Protocol · access layer</p>
@@ -17,7 +17,7 @@ export default function Hero() {
             entirely on your own infrastructure.
           </p>
           <div className="hero-cta" data-stagger style={{ marginTop: 28, "--stagger-i": 3 } as React.CSSProperties}>
-            <a className="btn btn-primary" href="#tab-how" data-tab="tab-how" suppressHydrationWarning>
+            <a className="btn btn-primary" href="#tab-how" data-tab="tab-how">
               Get started
             </a>
             <a className="btn btn-ghost" href={GITHUB_URL} target="_blank" rel="noopener">

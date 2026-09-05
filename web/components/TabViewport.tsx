@@ -2,7 +2,6 @@
 
 import { useEffect, type ReactNode } from "react";
 
-const STORAGE_KEY = "bifrost.tab";
 const WHEEL_THRESHOLD = 30;
 
 // Scale floor. Below this, content would be unreadable — but the contract is
@@ -102,24 +101,13 @@ export default function TabViewport({ children }: { children: ReactNode }) {
     }
 
     function currentId(): string {
-      let saved: string | null = null;
-      try {
-        saved = localStorage.getItem(STORAGE_KEY);
-      } catch {
-        /* private mode */
-      }
-      if (saved && indexOf(saved) >= 0) return saved;
-      return ORDER[0];
+      const active = sections.find((s) => s.classList.contains("is-active"));
+      return active ? active.id : ORDER[0];
     }
 
     function activate(id: string) {
       const i = indexOf(id);
       if (i < 0) return;
-      try {
-        localStorage.setItem(STORAGE_KEY, id);
-      } catch {
-        /* private mode */
-      }
       navLinks.forEach((a) => {
         if (a.getAttribute("data-tab") === id) a.setAttribute("aria-current", "true");
         else a.removeAttribute("aria-current");
@@ -255,8 +243,9 @@ export default function TabViewport({ children }: { children: ReactNode }) {
       };
     }
 
-    // Initial state
-    goTo(currentId());
+    // Initial state: always the first tab (Hero renders as is-active in the
+    // static markup, so first paint already matches).
+    goTo(ORDER[0]);
 
     return () => {
       navLinks.forEach((a) => a.removeEventListener("click", onNavClick));
