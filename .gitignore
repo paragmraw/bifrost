@@ -228,6 +228,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Vendored @railway/cli wrapper (tools/railway-cli): its postinstall downloads
+# the release tarball into the package dir and extracts the per-platform
+# binary beside bin/railway.js. Never commit platform binaries.
+tools/railway-cli/downloaded.tar.gz
+tools/railway-cli/bin/railway
+tools/railway-cli/bin/railway.exe
+
 # Local scratch work
 scratch/
 
